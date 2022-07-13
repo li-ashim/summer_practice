@@ -13,6 +13,7 @@ asgi-lifespan = "*"
 pytest-asyncio = "*"
 requests = "*"
 pytest-env = "*"
+aerich = "*"
 
 [dev-packages]
 

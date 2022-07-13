@@ -17,7 +17,7 @@ TORTOISE_ORM = {
     'connections': {'default': config.sqlite_host},
     'apps': {
         'models': {
-            'models': ['app.models.models', ],
+            'models': ['app.models.models', 'aerich.models'],
             'default_connection': 'default',
         },
     },
