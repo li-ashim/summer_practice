@@ -79,6 +79,11 @@ class CardTortoise(Model):
     id = fields.IntField(pk=True, generated=True)
     title = fields.CharField(max_length=255, null=False)
     content = fields.TextField(null=False)
+    owner = fields.ForeignKeyField(
+        'models.UserTortoise',
+        related_name='card_owner',
+        on_delete=fields.CASCADE
+    )
     collections: fields.ReverseRelation['CollectionTortoise']
     creation = fields.DatetimeField(null=False, auto_now_add=True)
     last_update = fields.DatetimeField(null=False, auto_now=True)
@@ -116,6 +121,11 @@ class CollectionTortoise(Model):
         'models.CardTortoise',
         related_name='collections',
         on_delete=fields.SET_NULL
+    )
+    owner = fields.ForeignKeyField(
+        'models.UserTortoise',
+        related_name='collection_owner',
+        on_delete=fields.CASCADE
     )
     is_private = fields.BooleanField(default=True)
     last_update = fields.DatetimeField(null=False, auto_now=True)

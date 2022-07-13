@@ -8,6 +8,16 @@ from asgi_lifespan import LifespanManager
 from app.main import app
 from app.models.models import CardTortoise, CollectionTortoise
 
+test_user_1 = {
+    'email': 'user1@example.com',
+    'password': 'pass1'
+}
+
+test_user_2 = {
+    'email': 'user2@example.com',
+    'password': 'pass2'
+}
+
 test_collection_1 = {
     'title': 'test collection 1',
     'description': 'test description 1',
