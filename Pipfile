@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+pre-commit = "*"
+tortoise-orm = "*"
+uvicorn = "*"
+httpx = "*"
+asgi-lifespan = "*"
+pytest-asyncio = "*"
+requests = "*"
+pytest-env = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
