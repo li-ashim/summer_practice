@@ -1,0 +1,10 @@
+services:
+
+  api:
+    container_name: api
+    build: .
+    environment:
+      - SQLITE_HOST=sqlite://sqlite.db
+    command: python -m uvicorn --host 0.0.0.0 --port 8000 app.main:app
+    ports:
+      - 8000:8000
