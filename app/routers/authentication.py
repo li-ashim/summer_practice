@@ -31,7 +31,8 @@ async def create_access_token(user: UserDB) -> AccessToken:
     return AccessToken.from_orm(access_token_tortoise)
 
 
-@router.post('/register', status_code=status.HTTP_201_CREATED)
+@router.post('/register', status_code=status.HTTP_201_CREATED,
+             summary='Register user.')
 async def register_user(user: UserCreate) -> User:
     """Register user with email and password."""
     hashed_password = get_password_hash(user.password)
@@ -50,7 +51,7 @@ async def register_user(user: UserCreate) -> User:
         return User.from_orm(user_tortoise)
 
 
-@router.post('/token')
+@router.post('/token', summary='Create token')
 async def create_token(form_data: OAuth2PasswordRequestForm =
                        Depends(OAuth2PasswordRequestForm)):
     """Create token if user authenticated, 401 otherwise."""

@@ -5,6 +5,7 @@ from app.dependencies import get_current_user
 from app.models.authentication import UserTortoise
 from app.models.models import (CollectionCreate, CollectionDBLong,
                                CollectionDBShort, CollectionPartialUpdate,
+                               CollectionPublicLong, CollectionPublicShort,
                                CollectionTortoise)
 from app.utils.utils import pagination
 
@@ -16,7 +17,8 @@ async def get_collection_or_404(id: int) -> CollectionTortoise:
 
 async def check_collection_owner(
         user: UserTortoise = Depends(get_current_user),
-        collection: CollectionTortoise = Depends(get_collection_or_404)):
+        collection: CollectionTortoise = Depends(get_collection_or_404)
+):
     if collection.owner_id == user.id:
         return collection
     else:
@@ -29,11 +31,28 @@ router = APIRouter(
 )
 
 
-@router.get('/')
-async def read_collections(pagination: tuple[int, int] = Depends(pagination),
-                           user: UserTortoise = Depends(get_current_user)) \
-                     -> list[CollectionDBShort]:
-    """Get list of collections."""
+@router.get('/public', summary='Get publicly available collections.')
+async def read_public_collections(
+    pagination: tuple[int, int] = Depends(pagination)
+) -> list[CollectionPublicShort]:
+    """Get list of public collections."""
+    skip, limit = pagination
+    collections = await CollectionTortoise.filter(
+        is_private=False
+    ).offset(skip).limit(limit)
+
+    for col in collections:
+        await col.fetch_related('owner')
+
+    return [CollectionPublicShort.from_orm(col) for col in collections]
+
+
+@router.get('/private', summary='Get collections that you own.')
+async def read_private_collections(
+    pagination: tuple[int, int] = Depends(pagination),
+    user: UserTortoise = Depends(get_current_user)
+) -> list[CollectionDBShort]:
+    """Get list of collections which belong to you."""
     skip, limit = pagination
     collections = await CollectionTortoise.filter(
         owner_id=user.id
@@ -42,19 +61,35 @@ async def read_collections(pagination: tuple[int, int] = Depends(pagination),
     return [CollectionDBShort.from_orm(col) for col in collections]
 
 
-@router.get('/{id}', response_model=CollectionDBLong)
-async def read_collection(
+@router.get('/public/{id}', response_model=CollectionDBLong,
+            summary='Get particular public collection.')
+async def read_public_collection(
+    collection: CollectionTortoise =
+    Depends(get_collection_or_404)
+) -> CollectionPublicLong:
+    """Get public collection with all its cards."""
+    await collection.fetch_related('cards')
+    for card in collection.cards:
+        await card.fetch_related('collections')
+    await collection.fetch_related('owner')
+    return CollectionPublicLong.from_orm(collection)
+
+
+@router.get('/private/{id}', response_model=CollectionDBLong,
+            summary='Get particular collection that you own.')
+async def read_private_collection(
     collection: CollectionTortoise =
     Depends(check_collection_owner)
 ) -> CollectionDBLong:
-    """Get card with particular id."""
+    """Get private collection with all its cards."""
     await collection.fetch_related('cards')
     for card in collection.cards:
         await card.fetch_related('collections')
     return CollectionDBLong.from_orm(collection)
 
 
-@router.post('/', status_code=status.HTTP_201_CREATED)
+@router.post('/', status_code=status.HTTP_201_CREATED,
+             summary='Create collection.')
 async def save_collection(
     collection: CollectionCreate,
     user: UserTortoise = Depends(get_current_user)
@@ -67,7 +102,7 @@ async def save_collection(
     return CollectionDBShort.from_orm(collection_tortoise)
 
 
-@router.put('/{id}')
+@router.put('/{id}', summary='Update collection.')
 async def update_collection(
     collection_update: CollectionPartialUpdate,
     collection: CollectionTortoise = Depends(check_collection_owner)
@@ -79,7 +114,8 @@ async def update_collection(
     return CollectionDBShort.from_orm(collection)
 
 
-@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT,
+               summary='Delete collection.')
 async def delete_collection(
     collection: CollectionTortoise =
     Depends(check_collection_owner)

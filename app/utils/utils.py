@@ -12,7 +12,7 @@ async def pagination(
     return (skip, capped_limit)
 
 
-def get_list_from_queryset(cls, val: ManyToManyRelation) -> list:
+def get_list_from_relation(cls, val: ManyToManyRelation) -> list:
     """Return list of objects from queryset."""
     try:
         return list(val)

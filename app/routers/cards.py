@@ -27,7 +27,7 @@ router = APIRouter(
 )
 
 
-@router.get('/')
+@router.get('/', summary='Get all your cards.')
 async def read_cards(pagination: tuple[int, int] = Depends(pagination),
                      user: UserTortoise = Depends(get_current_user)) \
                      -> list[CardDB]:
@@ -42,14 +42,15 @@ async def read_cards(pagination: tuple[int, int] = Depends(pagination),
     return [CardDB.from_orm(card) for card in cards]
 
 
-@router.get('/{id}')
+@router.get('/{id}', summary='Get particular card.')
 async def read_card(card: CardTortoise = Depends(check_card_owner)) -> CardDB:
     """Get card with particular id."""
     await card.fetch_related('collections')
     return CardDB.from_orm(card)
 
 
-@router.post('/', status_code=status.HTTP_201_CREATED)
+@router.post('/', status_code=status.HTTP_201_CREATED,
+             summary='Create card.')
 async def save_card(card: CardCreate,
                     user: UserTortoise = Depends(get_current_user)) -> CardDB:
     """Create card."""
@@ -71,7 +72,7 @@ async def save_card(card: CardCreate,
     return CardDB.from_orm(card_tortoise)
 
 
-@router.put('/{id}')
+@router.put('/{id}', summary='Update card.')
 async def update_card(
         card_update: CardPartialUpdate,
         card: CardTortoise = Depends(check_card_owner)) -> CardDB:
@@ -101,7 +102,8 @@ async def update_card(
     return CardDB.from_orm(card)
 
 
-@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT,
+               summary='Delete card.')
 async def delete_card(card: CardTortoise = Depends(check_card_owner)):
     """Delete card."""
     await card.fetch_related('collections')

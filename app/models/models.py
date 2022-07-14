@@ -4,7 +4,8 @@ from pydantic import BaseModel, Field, validator
 from tortoise import fields
 from tortoise.models import Model
 
-from app.utils.utils import get_list_from_queryset
+from app.models.authentication import UserPublic
+from app.utils.utils import get_list_from_relation
 
 
 class CollectionBase(BaseModel):
@@ -27,6 +28,10 @@ class CollectionDBShort(CollectionBase):
     id: int
 
 
+class CollectionPublicShort(CollectionDBShort):
+    owner: UserPublic
+
+
 # The order of class declaration is mixed
 # because of circular dependency of models
 
@@ -40,7 +45,7 @@ class CardBase(BaseModel):
         'collections',
         pre=True,
         allow_reuse=True
-    )(get_list_from_queryset)
+    )(get_list_from_relation)
 
     class Config:
         orm_mode = True
@@ -68,7 +73,7 @@ class CardPartialUpdate(BaseModel):
         'collections',
         pre=True,
         allow_reuse=True
-    )(get_list_from_queryset)
+    )(get_list_from_relation)
 
     class Config:
         orm_mode = True
@@ -102,7 +107,11 @@ class CollectionDBLong(CollectionBase):
         'cards',
         pre=True,
         allow_reuse=True
-    )(get_list_from_queryset)
+    )(get_list_from_relation)
+
+
+class CollectionPublicLong(CollectionDBLong):
+    owner: UserPublic
 
 
 class CollectionPartialUpdate(BaseModel):

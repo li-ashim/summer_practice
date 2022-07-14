@@ -10,11 +10,13 @@ from app.models.models import CardTortoise, CollectionTortoise
 
 test_user_1 = {
     'email': 'user1@example.com',
+    'name': 'user1',
     'password': 'pass1'
 }
 
 test_user_2 = {
     'email': 'user2@example.com',
+    'name': 'user2',
     'password': 'pass2'
 }
 

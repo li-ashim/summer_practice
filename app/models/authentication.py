@@ -14,7 +14,14 @@ def get_expiration(duration_seconds: int = 86400) -> datetime:
 
 class UserBase(BaseModel):
     email: EmailStr
-    name: str | None
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+class UserPublic(BaseModel):
+    name: str
 
     class Config:
         orm_mode = True
@@ -38,7 +45,7 @@ class UserTortoise(Model):
                              null=False, max_length=255)
     cards: fields.ReverseRelation
     collections: fields.ReverseRelation
-    name = fields.CharField(max_length=80, null=True)
+    name = fields.CharField(max_length=80, null=False)
     hashed_password = fields.CharField(null=False, max_length=255)
 
     class Meta:

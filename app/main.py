@@ -4,8 +4,20 @@ from tortoise.contrib.fastapi import register_tortoise
 from app.config import config
 from app.routers import authentication, cards, collections
 
+description = """
+This api can power backend for flashcard service.
+
+Features:
+
+* Create collections of flashcards
+* Make collection public to share your cards
+* Manage your cards
+* Observe new collections from list of public ones
+"""
+
 app = FastAPI(
-    title='REST API for flashcard service'
+    title='Flashcards',
+    description=description
 )
 
 
