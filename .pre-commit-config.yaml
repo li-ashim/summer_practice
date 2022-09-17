@@ -25,12 +25,9 @@ repos:
     hooks:
     -   id: mypy
 
--   repo: local
+-   repo: https://github.com/li-ashim/docker-pytest
+    rev: 809c9003c1e21a8a9bdc9061457b4aeb70da398a
     hooks:
-    -   id: pytest
-        name: Run pytest
-        entry: pytest -c pytest_config.ini
-        language: system
-        always_run: true
-        verbose: true
-        pass_filenames: false
+    -   id: docker-pytest
+        files: docker-compose_test.yaml
+        verbose: True

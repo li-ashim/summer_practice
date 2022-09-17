@@ -1,0 +1,10 @@
+services:
+
+  api_test:
+    container_name: api_test
+    build: .
+    environment:
+      - SQLITE_HOST="sqlite://:memory:"
+    command: pytest -c pytest_config.ini
+    ports:
+      - 8000:8000
